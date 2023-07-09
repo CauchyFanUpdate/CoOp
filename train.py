@@ -155,7 +155,7 @@ if __name__ == "__main__":
     parser.add_argument("--root", type=str, default="", help="path to dataset")
     parser.add_argument("--output-dir", type=str, default="", help="output directory")
     parser.add_argument(
-        "--resume",
+        "--resume",  # 模型加载
         type=str,
         default="",
         help="checkpoint directory (from which the training resumes)",
