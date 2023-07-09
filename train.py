@@ -126,7 +126,7 @@ def setup_cfg(args):
 
 
 def main(args):
-    cfg = setup_cfg(args)
+    cfg = setup_cfg(args)  # 参数配置
     if cfg.SEED >= 0:
         print("Setting fixed seed: {}".format(cfg.SEED))
         set_random_seed(cfg.SEED)
@@ -139,15 +139,15 @@ def main(args):
     print("Collecting env info ...")
     print("** System info **\n{}\n".format(collect_env_info()))
 
-    trainer = build_trainer(cfg)
+    trainer = build_trainer(cfg)  # 构建训练形式
 
-    if args.eval_only:
-        trainer.load_model(args.model_dir, epoch=args.load_epoch)
-        trainer.test()
+    if args.eval_only:  # 是否进行评测，只进行评测
+        trainer.load_model(args.model_dir, epoch=args.load_epoch)  # 模型加载
+        trainer.test()  # 开始测试
         return
 
     if not args.no_train:
-        trainer.train()
+        trainer.train()  # 开始进行训练
 
 
 if __name__ == "__main__":
@@ -164,35 +164,35 @@ if __name__ == "__main__":
         "--seed", type=int, default=-1, help="only positive value enables a fixed seed"
     )
     parser.add_argument(
-        "--source-domains", type=str, nargs="+", help="source domains for DA/DG"
+        "--source-domains", type=str, nargs="+", help="source domains for DA/DG"  # 需要确定源域数据
     )
     parser.add_argument(
-        "--target-domains", type=str, nargs="+", help="target domains for DA/DG"
+        "--target-domains", type=str, nargs="+", help="target domains for DA/DG"  # 还有需要确定目标域数据
     )
     parser.add_argument(
-        "--transforms", type=str, nargs="+", help="data augmentation methods"
+        "--transforms", type=str, nargs="+", help="data augmentation methods"  # 图像增强方法
     )
     parser.add_argument(
-        "--config-file", type=str, default="", help="path to config file"
+        "--config-file", type=str, default="", help="path to config file"  # 配置文件
     )
     parser.add_argument(
-        "--dataset-config-file",
+        "--dataset-config-file",  # 数据配置文件
         type=str,
         default="",
         help="path to config file for dataset setup",
     )
-    parser.add_argument("--trainer", type=str, default="", help="name of trainer")
-    parser.add_argument("--backbone", type=str, default="", help="name of CNN backbone")
-    parser.add_argument("--head", type=str, default="", help="name of head")
-    parser.add_argument("--eval-only", action="store_true", help="evaluation only")
+    parser.add_argument("--trainer", type=str, default="", help="name of trainer")  # 什么是trainer需要确定清楚
+    parser.add_argument("--backbone", type=str, default="", help="name of CNN backbone")  # backbone选型
+    parser.add_argument("--head", type=str, default="", help="name of head")  # head的选型
+    parser.add_argument("--eval-only", action="store_true", help="evaluation only")  # 是否进行推理
     parser.add_argument(
         "--model-dir",
         type=str,
         default="",
-        help="load model from this directory for eval-only mode",
+        help="load model from this directory for eval-only mode",  # 模型加载地址
     )
     parser.add_argument(
-        "--load-epoch", type=int, help="load model weights at this epoch for evaluation"
+        "--load-epoch", type=int, help="load model weights at this epoch for evaluation"  # 加载什么epoch的模型
     )
     parser.add_argument(
         "--no-train", action="store_true", help="do not call trainer.train()"
