@@ -1,18 +1,18 @@
 ## How to Run
 
-We provide the running scripts in `scripts/coop`, which allow you to reproduce the results on the IJCV'22 paper.
+We provide the running scripts in `scripts/coop`, which allow you to reproduce the results on the IJCV'22 paper.  提供了训练脚本在scripts/coop
 
-Make sure you change the path in `DATA` and run the commands under the main directory `CoOp/`.
+Make sure you change the path in `DATA` and run the commands under the main directory `CoOp/`. 修改DATA的路径
 
-### Few-Shot Learning
+### Few-Shot Learning  Few-shot任务
 
-All you need is `CoOp/scripts/coop/main.sh`, which contains six input arguments.
+All you need is `CoOp/scripts/coop/main.sh`, which contains six input arguments.  有六个参数
 
 `DATASET` takes as input a dataset name, like `imagenet` or `caltech101`. The valid names are the files' names in `CoOp/configs/datasets/`.
 
 `CFG` means which config file to use, such as `rn50`, `rn101` or `vit_b32` (see `CoOp/configs/trainers/CoOp/`). Note that for ImageNet, we use `CoOp/configs/trainers/CoOp/*_ep50.yaml` for all settings (please follow the implementation details shown in the paper).
 
-Below we provide examples on how to run CoOp on Caltech101.
+Below we provide examples on how to run CoOp on Caltech101.  # 选择vit_b32
 
 **CLIP + CoOp (M=16, end)**:
 - 1 shot: `bash scripts/coop/main.sh caltech101 rn50_ep50 end 16 1 False`
