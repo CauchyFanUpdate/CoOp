@@ -17,7 +17,7 @@ _tokenizer = _Tokenizer()
 
 
 def load_clip_to_cpu(cfg):
-    backbone_name = cfg.MODEL.BACKBONE.NAME
+    backbone_name = cfg.MODEL.BACKBONE.NAME  # backbone vit
     url = clip._MODELS[backbone_name]
     model_path = clip._download(url)
 
@@ -182,22 +182,22 @@ class PromptLearner(nn.Module):
         return prompts
 
 
-class CustomCLIP(nn.Module):
+class CustomCLIP(nn.Module):  # 构建提示特征
     def __init__(self, cfg, classnames, clip_model):
         super().__init__()
-        self.prompt_learner = PromptLearner(cfg, classnames, clip_model)
-        self.tokenized_prompts = self.prompt_learner.tokenized_prompts
-        self.image_encoder = clip_model.visual
-        self.text_encoder = TextEncoder(clip_model)
-        self.logit_scale = clip_model.logit_scale
+        self.prompt_learner = PromptLearner(cfg, classnames, clip_model)  # 提示学习
+        self.tokenized_prompts = self.prompt_learner.tokenized_prompts  # 提示学习tokenized
+        self.image_encoder = clip_model.visual                          # clip的视觉encoder
+        self.text_encoder = TextEncoder(clip_model)                     # 构建prompt文本提示
+        self.logit_scale = clip_model.logit_scale                       
         self.dtype = clip_model.dtype
 
     def forward(self, image):
-        image_features = self.image_encoder(image.type(self.dtype))
+        image_features = self.image_encoder(image.type(self.dtype))   # 得到视觉特征
 
-        prompts = self.prompt_learner()
-        tokenized_prompts = self.tokenized_prompts
-        text_features = self.text_encoder(prompts, tokenized_prompts)
+        prompts = self.prompt_learner()                               # 提示特征
+        tokenized_prompts = self.tokenized_prompts                    # 提示特征的tokenized
+        text_features = self.text_encoder(prompts, tokenized_prompts)  # 文本encoder
 
         image_features = image_features / image_features.norm(dim=-1, keepdim=True)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
@@ -221,10 +221,10 @@ class CoOp(TrainerX):
 
     def build_model(self):
         cfg = self.cfg
-        classnames = self.dm.dataset.classnames
+        classnames = self.dm.dataset.classnames  # 类别名称
 
         print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
-        clip_model = load_clip_to_cpu(cfg)
+        clip_model = load_clip_to_cpu(cfg)  # 加载clip模型
         
         if cfg.TRAINER.COOP.PREC == "fp32" or cfg.TRAINER.COOP.PREC == "amp":
             # CLIP's default precision is fp16
@@ -235,7 +235,7 @@ class CoOp(TrainerX):
 
         print("Turning off gradients in both the image and the text encoder")
         for name, param in self.model.named_parameters():
-            if "prompt_learner" not in name:
+            if "prompt_learner" not in name:   # 冻结参数
                 param.requires_grad_(False)
 
         if cfg.MODEL.INIT_WEIGHTS:
@@ -257,7 +257,7 @@ class CoOp(TrainerX):
             self.model = nn.DataParallel(self.model)
 
     def forward_backward(self, batch):
-        image, label = self.parse_batch_train(batch)
+        image, label = self.parse_batch_train(batch)  # 拆分数据
         
         prec = self.cfg.TRAINER.COOP.PREC
         if prec == "amp":
